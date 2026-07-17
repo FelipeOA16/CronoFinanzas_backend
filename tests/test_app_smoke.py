@@ -12,3 +12,4 @@ def test_health_endpoint_is_registered_under_api_prefix():
     paths = {route.path for route in app.routes}
 
     assert "/api/v1/health" in paths
+    assert "/health" in paths

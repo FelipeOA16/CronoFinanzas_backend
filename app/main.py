@@ -36,6 +36,11 @@ app.include_router(
 )
 
 
+@app.get("/health", include_in_schema=False)
+def health_check():
+    return health.health()
+
+
 @app.get("/", include_in_schema=False)
 def root():
     return {"app": settings.APP_NAME}
