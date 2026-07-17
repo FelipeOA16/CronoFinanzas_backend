@@ -1,0 +1,2 @@
+(.venv) D:\Proyecto_CronoFinanzas\backend>curl -X POST http://127.0.0.1:8000/api/v1/users/ -H "Content-Type: application/json" -H "Authorization: Bearer <ADMIN_TOKEN>" -d '{"email":"u1@example.com","password":"pass123","username":"u1"}'
+{"detail":"Method Not Allowed"}

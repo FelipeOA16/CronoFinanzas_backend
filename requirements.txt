@@ -1,11 +1,13 @@
 fastapi
 uvicorn[standard]
 sqlalchemy>=2
-psycopg2-binary
+psycopg[binary]
 alembic
 pydantic>=2
 pydantic-settings
 python-jose[cryptography]
-passlib[bcrypt]
+argon2-cffi
 python-multipart
 email-validator
+user-agents
+resend

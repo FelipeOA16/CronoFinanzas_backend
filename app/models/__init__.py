@@ -1,1 +1,12 @@
 from . import user  # noqa: F401
+from . import credential  # noqa: F401
+from . import auth_provider  # noqa: F401
+from . import session  # noqa: F401
+from . import role  # noqa: F401
+from . import presupuesto  # noqa: F401
+from . import cuenta  # noqa: F401
+from . import categoria  # noqa: F401
+from . import transaccion  # noqa: F401
+from . import deuda_prestamo  # noqa: F401
+from . import meta_financiera  # noqa: F401
+from . import captura_rapida  # noqa: F401
