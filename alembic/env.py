@@ -1,33 +1,46 @@
 from logging.config import fileConfig
 import os
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+import sys
 
+from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
-config = context.config
-fileConfig(config.config_file_name)
-
-import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from app.db.base import Base
 from app.core.config import Settings
 
+config = context.config
+
+# Usar fileConfig normalmente (no tocar internals como _interpolation)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
+
 settings = Settings()
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+
+# Inyectar DATABASE_URL en la config de alembic (escapar % para evitar interpolation error)
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL.replace("%", "%%"))
+
 target_metadata = Base.metadata
 
+
 def run_migrations_offline():
-    context.configure(url=settings.DATABASE_URL, target_metadata=target_metadata, literal_binds=True)
+    context.configure(
+        url=settings.DATABASE_URL,
+        target_metadata=target_metadata,
+        literal_binds=True,
+    )
     with context.begin_transaction():
         context.run_migrations()
 
 
 def run_migrations_online():
-    connectable = engine_from_config(config.get_section(config.config_ini_section), prefix="sqlalchemy.", poolclass=pool.NullPool)
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
+
     with connectable.connect() as connection:
         context.configure(connection=connection, target_metadata=target_metadata)
         with context.begin_transaction():

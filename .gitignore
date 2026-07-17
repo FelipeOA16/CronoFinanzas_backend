@@ -1,6 +1,28 @@
-__pycache__/
-*.pyc
-.env
+# Python / virtualenv
+.venv/
 venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Test / analysis / coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+coverage/
+
+# IDE / OS
 .idea/
 .vscode/
+.DS_Store
+
+# Logs
+*.log
