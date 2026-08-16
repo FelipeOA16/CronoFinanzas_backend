@@ -1,0 +1,58 @@
+name: V1 baseline CI
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: v1-baseline-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  SECRET_KEY: baseline-ci-secret-not-for-production
+  DB_PASSWORD: baseline-ci-password-not-for-production
+
+jobs:
+  validate:
+    name: Tests, import and migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile application
+        run: python -m compileall -q app
+
+      - name: Import FastAPI application
+        run: python -c "from app.main import app; assert app.title == 'app-finanzas-api'"
+
+      - name: Verify single Alembic head
+        run: test "$(alembic heads | grep -c '(head)')" -eq 1
+
+      - name: Run tests
+        run: pytest -q
+
+  build-container:
+    name: Build backend container
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t cronofinanzas-backend:baseline .
