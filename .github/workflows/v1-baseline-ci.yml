@@ -44,7 +44,7 @@ jobs:
         run: test "$(alembic heads | grep -c '(head)')" -eq 1
 
       - name: Run tests
-        run: pytest -q
+        run: python -m pytest -q
 
   build-container:
     name: Build backend container
