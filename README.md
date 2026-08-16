@@ -28,8 +28,12 @@ source .venv/bin/activate
 ## Instalacion
 
 ```bash
-pip install -r requirements.txt
+pip install -c constraints.txt -r requirements.txt
 ```
+
+Las dependencias directas y la resolución transitiva verificada están fijadas.
+Las actualizaciones de `requirements*.txt` o `constraints.txt` deben ejecutarse
+de forma intencional y volver a validar toda la CI.
 
 ## Configuracion
 
@@ -78,7 +82,8 @@ http://localhost:8000/docs
 Si existen tests en el checkout:
 
 ```bash
-pytest
+pip install -c constraints.txt -r requirements.txt -r requirements-dev.txt
+SECRET_KEY=test-secret DB_PASSWORD=test-password python -m pytest
 ```
 
 Validacion basica de import:
@@ -118,8 +123,11 @@ docker run --env-file .env -p 8000:8000 cronofinanzas-backend
 El `Dockerfile` ejecuta:
 
 ```bash
-alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port 8000
+uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-10000}
 ```
+
+Las migraciones se ejecutan como una operación controlada y no durante el
+arranque automático del contenedor.
 
 ## Estructura
 
