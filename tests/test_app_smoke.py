@@ -9,7 +9,12 @@ def test_app_imports_as_fastapi_instance():
 
 
 def test_health_endpoint_is_registered_under_api_prefix():
-    paths = {route.path for route in app.routes}
+    documented_paths = set(app.openapi()["paths"])
+    direct_paths = {
+        route.path
+        for route in app.routes
+        if isinstance(getattr(route, "path", None), str)
+    }
 
-    assert "/api/v1/health" in paths
-    assert "/health" in paths
+    assert "/api/v1/health" in documented_paths
+    assert "/health" in direct_paths
